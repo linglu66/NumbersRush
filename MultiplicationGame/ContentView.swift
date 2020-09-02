@@ -32,25 +32,35 @@ struct ContentView: View {
            
             if state == "settings"{
                 ZStack{
-                     LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .bottom, endPoint: .top).edgesIgnoringSafeArea(.all)
+                    LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .bottom, endPoint: .top).edgesIgnoringSafeArea(.all)
                     VStack{
-                    Section{
-                        Stepper("Multiplication Range: \(maxMultRange)", value: $maxMultRange,  in: 1...12)
-                        Picker("Number of Questions", selection: $numQuestions){
-                            ForEach(0..<questionAmounts.count){
-                                Text("\(self.questionAmounts[$0])")
-                            }
-                        }.pickerStyle(SegmentedPickerStyle())
-                    }
-                    
-                    Button("Start"){
-                        withAnimation(.default){
-                                   self.state = "active"
+                        Section{
+                            Spacer()
+                            Spacer()
+                            Stepper("Multiplication Range: \(maxMultRange)", value: $maxMultRange,  in: 1...12).foregroundColor(.white)
+                            Picker("Number of Questions", selection: $numQuestions){
+                                ForEach(0..<questionAmounts.count){
+                                    Text("\(self.questionAmounts[$0])")
+                                }
+                            }.pickerStyle(SegmentedPickerStyle())
+                            
                         }
-                                   
-                    }.foregroundColor(.white)
-                    }
-                }.transition(.asymmetric(insertion: .move(edge: .top), removal: .move(edge: .top)))
+                        Spacer()
+                            Button(action:{
+                                withAnimation(.default){
+                                       self.state = "active"
+                                }})
+                            {Text("Start!").fontWeight(.bold)
+                                
+                            }.foregroundColor(.white)
+                            .frame(width: 200, height: 100)
+                            .background(Color.orange)
+                            .cornerRadius(10)
+                            .font(.largeTitle)
+                                Spacer()
+                            
+                        }.padding(20)
+                    }.transition(.asymmetric(insertion: .move(edge: .top), removal: .move(edge: .top)))
                
                 
             }else if state == "active" {
@@ -67,16 +77,15 @@ struct ContentView: View {
                                         self.turn(number)
                                    
                                 }){
-                                    Text("\(number)")
-//                                                            number == self.correctAnswerIndex ? "\(self.qlist[self.questionIndex].answer)":"\(Int.random(in: 1...self.maxMultRange*12))")
-                                                   }
-                            }
+                                    Text("\(number)")}
+                            }.foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.orange)
+                            .cornerRadius(2)
+                            .padding(10)
                         }
-//                    dur()
-    //                Text("LOL")
-    ////                dur{potato:"Hi"}
-    ////                Text("\(question.first_num) x \(question.second_num)")
-                    Button("Settings"){
+
+                    Button("Restart"){
                         withAnimation(.default){
                         self.state = "settings"
                             self.reset()
@@ -96,15 +105,18 @@ struct ContentView: View {
             }else if state == "endGame"{
                 ZStack{
                     LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .bottom, endPoint: .top).edgesIgnoringSafeArea(.all)
-                VStack{
-                    Text("Congratulations! End of game. You got \(self.correctCount) out of \(self.questionAmounts[self.numQuestions]) questions right.")
-                    Button("Settings"){
-                        withAnimation(.default){
-                            self.state = "settings"
-                            self.reset()
-                        }
-                    }.foregroundColor(.white)
-                    }
+                    VStack{
+                        Text("Congratulations! \n You got \(self.correctCount) out of \(self.questionAmounts[self.numQuestions]) questions right.")
+                            .foregroundColor(Color.white)
+                        .font(.largeTitle)
+                        .fontWeight(.black)
+                        Button("Restart"){
+                            withAnimation(.default){
+                                self.state = "settings"
+                                self.reset()
+                            }
+                        }.foregroundColor(.white)
+                    }.padding(20)
                 }.transition(.move(edge: .bottom))
                 
             }
@@ -132,11 +144,7 @@ struct ContentView: View {
         if self.questionIndex == qlist.count{
             self.questionIndex -= 1
             withAnimation(.default){
-//            qlist = [Question]()
                 self.state = "endGame"}
-         
-//        reset()
-            
 //            }
         }
 //
@@ -146,25 +154,18 @@ struct ContentView: View {
         self.correctCount = 0
         self.questionIndex = 0
                     withAnimation(.default){
-//                    self.state = "endGame"
                         self.endGame=true
                     }
-        
     }
 
     func generateQuestions(){
         qlist = [Question]()
         for _ in 0 ..< questionAmounts[numQuestions] {
-            
-//            get options
-            
-            qlist.append(Question(maxMultRange:maxMultRange))
-            
-            
+            qlist.append(Question(maxMultRange:maxMultRange, first_num:Int.random(in: 1...maxMultRange)))
         }
         print("Generated qlist")
         print(qlist)
-        print(qlist.count)
+
         
     }
     
@@ -177,7 +178,7 @@ struct ContentView: View {
 
 struct Question{
     let maxMultRange: Int
-    var first_num: Int {Int.random(in: 1...maxMultRange)}
+    let first_num: Int
     let second_num = Int.random(in: 1 ..< 13)
     var answer: Int {first_num * second_num}
     let correctAnswerIndex = Int.random(in:0...3)
@@ -190,12 +191,18 @@ struct Question{
                 nums.append(answer)
                 
             }else{
-                
+                var neg: Bool
                 var num: Int
+                
                 repeat{
-                    num = Int.random(in: 1...1*12)
-                    print("im trapped")
-                } while num == answer || nums.contains(num)
+                    neg = Bool.random()
+                    num = Int.random(in: 1...4)*first_num
+                    if neg{
+                        num = answer - num
+                    }else{
+                        num = answer + num
+                    }
+                } while num <= 0 || nums.contains(num)
                 
                 nums.append(num)}
             print("nums looks like this: \(nums)")
