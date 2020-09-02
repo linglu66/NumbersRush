@@ -38,6 +38,7 @@ struct ContentView: View {
                             Spacer()
                             Spacer()
                             Stepper("Multiplication Range: \(maxMultRange)", value: $maxMultRange,  in: 1...12).foregroundColor(.white)
+                            Text("How many questions?")
                             Picker("Number of Questions", selection: $numQuestions){
                                 ForEach(0..<questionAmounts.count){
                                     Text("\(self.questionAmounts[$0])")
@@ -50,13 +51,14 @@ struct ContentView: View {
                                 withAnimation(.default){
                                        self.state = "active"
                                 }})
-                            {Text("Start!").fontWeight(.bold)
+                            {Text("Start!").foregroundColor(.white)
+                            .font(.system(size: 50, weight: .bold, design: .rounded))
                                 
-                            }.foregroundColor(.white)
+                            }
                             .frame(width: 200, height: 100)
                             .background(Color.orange)
                             .cornerRadius(10)
-                            .font(.largeTitle)
+                            
                                 Spacer()
                             
                         }.padding(20)
@@ -67,23 +69,32 @@ struct ContentView: View {
                 
                 
                 ZStack{
-                    Color.white
+                    Color.blue
+                        .edgesIgnoringSafeArea(.all)
 //
                     VStack{
+                        Spacer()
                         Text("\(qlist[questionIndex].first_num) x \(qlist[questionIndex].second_num)")
+                        .foregroundColor(.white)
+                            .font(.system(size: 50, weight: .bold, design: .rounded))
+//                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        Spacer()
                         VStack{
                             ForEach(self.qlist[questionIndex].options, id:\.self){number in
                                 Button(action:{
                                         self.turn(number)
                                    
                                 }){
-                                    Text("\(number)")}
-                            }.foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(Color.orange)
-                            .cornerRadius(2)
+                                    Text("\(number)")
+                                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                                }
+                            }.foregroundColor(.blue)
+                            .frame(width: 200, height: 100)
+                            .background(Color.white)
+                            .cornerRadius(15)
                             .padding(10)
                         }
+                        Spacer()
 
                     Button("Restart"){
                         withAnimation(.default){
@@ -104,7 +115,7 @@ struct ContentView: View {
 //                }
             }else if state == "endGame"{
                 ZStack{
-                    LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .bottom, endPoint: .top).edgesIgnoringSafeArea(.all)
+                    LinearGradient(gradient: Gradient(colors: [.purple, .blue]), startPoint: .bottom, endPoint: .top).edgesIgnoringSafeArea(.all)
                     VStack{
                         Text("Congratulations! \n You got \(self.correctCount) out of \(self.questionAmounts[self.numQuestions]) questions right.")
                             .foregroundColor(Color.white)
