@@ -8,14 +8,24 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
+struct dur: View {
+    @State private var correctAnswerIndex = 3
+    @State var qlist = [Question]()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ForEach(0..<4){number in
+                            Button(action:{
+                                print("hi")
+        
+                            }){
+                                Text(number == self.correctAnswerIndex ? "5":"Answer")
+                        }
     }
+}
 }
 
-struct SwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        SwiftUIView()
-    }
-}
+//struct SwiftUIView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SwiftUIView()
+//    }
+//}
